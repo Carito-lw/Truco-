@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with ELO, chips and game statistics",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID", "maxLength": 128 },
+        "displayName": { "type": "string", "description": "Player display name", "maxLength": 100 },
+        "email": { "type": "string", "description": "Player email", "maxLength": 150 },
+        "photoURL": { "type": "string", "description": "Avatar URL", "maxLength": 500 },
+        "elo": { "type": "number", "description": "Truco ELO ranking score" },
+        "chips": { "type": "number", "description": "In-game virtual chips" },
+        "gamesPlayed": { "type": "number", "description": "Total matches played" },
+        "wins": { "type": "number", "description": "Total matches won" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["uid", "displayName", "email", "elo", "chips"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Online game room in the lobby",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Room ID", "maxLength": 128 },
+        "name": { "type": "string", "description": "Room name", "maxLength": 120 },
+        "hostUid": { "type": "string", "description": "Host user UID", "maxLength": 128 },
+        "hostName": { "type": "string", "description": "Host display name", "maxLength": 100 },
+        "points": { "type": "number", "description": "15 or 30 points" },
+        "flor": { "type": "boolean", "description": "With flor or without flor" },
+        "turnTime": { "type": "number", "description": "Turn timer in seconds" },
+        "bet": { "type": "number", "description": "Bet amount in chips" },
+        "mode": { "type": "string", "enum": ["1v1", "2v2", "3v3"], "description": "Match mode" },
+        "playersCurrent": { "type": "number", "description": "Current players count" },
+        "playersMax": { "type": "number", "description": "Max players capacity" },
+        "tag": { "type": "string", "description": "Room tag", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["waiting", "playing", "finished"], "description": "Room state" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp" }
+      },
+      "required": ["id", "name", "hostUid", "hostName", "points", "flor", "bet", "mode", "status"]
+    },
+    "MatchEvent": {
+      "title": "MatchEvent",
+      "description": "Recorded match event or game result",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Event ID", "maxLength": 128 },
+        "userId": { "type": "string", "description": "Player UID", "maxLength": 128 },
+        "opponentName": { "type": "string", "description": "Opponent name", "maxLength": 100 },
+        "scoreNosotros": { "type": "number", "description": "Points player scored" },
+        "scoreEllos": { "type": "number", "description": "Points opponent scored" },
+        "targetPoints": { "type": "number", "description": "Target points (15 or 30)" },
+        "won": { "type": "boolean", "description": "Whether player won" },
+        "eloDelta": { "type": "number", "description": "ELO change" },
+        "mode": { "type": "string", "description": "Game mode", "maxLength": 50 },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["id", "userId", "scoreNosotros", "scoreEllos", "won"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Public user profile and statistics"
+    },
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/Room" },
+      "description": "Lobby online game rooms"
+    },
+    "/users/{userId}/matches/{matchId}": {
+      "schema": { "$ref": "#/entities/MatchEvent" },
+      "description": "Individual player match records"
+    }
+  }
+}

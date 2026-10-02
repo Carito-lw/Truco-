@@ -1,0 +1,6 @@
+{
+  "name": "Truco Criollo - Salón Digital",
+  "description": "Plataforma de Truco Criollo argentino en vivo con salas online, torneos, anotador digital táctil y telemetría de juego.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
