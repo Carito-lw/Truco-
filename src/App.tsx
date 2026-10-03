@@ -69,12 +69,12 @@ export default function App() {
     <div
       className={`${
         currentScreen === 'mesa-en-vivo'
-          ? 'h-screen max-h-screen overflow-hidden'
+          ? 'h-dvh overflow-hidden'
           : 'min-h-screen'
       } flex flex-col bg-surface-container-lowest text-on-surface font-body-md antialiased selection:bg-secondary/30 selection:text-secondary`}
     >
       {/* Persistent Navigation Header with XPath attributes */}
-      <Header
+      {currentScreen !== 'mesa-en-vivo' && <Header
         currentScreen={currentScreen}
         onNavigate={handleNavigate}
         onToggleJerarquiaModal={() => setIsJerarquiaModalOpen(true)}
@@ -82,13 +82,13 @@ export default function App() {
         onLogin={handleLogin}
         onLogout={handleLogout}
         onOpenLiveVoice={() => setIsLiveVoiceOpen(true)}
-      />
+      />}
 
       {/* Main Dynamic Viewport Area */}
       <main
         className={`flex-1 w-full bg-surface-container-lowest ${
           currentScreen === 'mesa-en-vivo'
-            ? 'pt-14 sm:pt-16 h-screen max-h-screen overflow-hidden flex flex-col'
+            ? 'min-h-0 overflow-hidden flex flex-col'
             : 'pt-20 min-h-screen'
         }`}
       >
@@ -123,3 +123,4 @@ export default function App() {
     </div>
   );
 }
+
