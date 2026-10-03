@@ -81,7 +81,7 @@ export async function testConnection() {
     }
   }
 }
-testConnection();
+
 
 // User Profile Firestore helper
 export interface UserProfile {
@@ -111,10 +111,10 @@ export async function syncUserProfile(user: FirebaseUser): Promise<UserProfile> 
         displayName: user.displayName || 'Gaucho Anónimo',
         email: user.email || '',
         photoURL: user.photoURL || '',
-        elo: 1840,
-        chips: 14250,
-        gamesPlayed: 412,
-        wins: 282,
+        elo: 1000,
+        chips: 0,
+        gamesPlayed: 0,
+        wins: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -158,3 +158,4 @@ export async function loginWithGoogle(): Promise<UserProfile | null> {
 export async function logoutFirebase(): Promise<void> {
   await signOut(auth);
 }
+

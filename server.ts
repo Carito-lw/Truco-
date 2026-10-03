@@ -13,18 +13,20 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json());
 
-const ai = new GoogleGenAI();
+// Optional voice service must not prevent the card game from starting.
+const ai = process.env.GEMINI_API_KEY ? new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }) : null;
 
 // REST endpoint for voice conversation fallback (Gaucho Copilot with Live audio/text personality)
 app.post('/api/voice-chat', async (req, res) => {
+  if (!ai || !process.env.GEMINI_TEXT_MODEL) { res.status(503).json({ error: 'El asistente de voz no está configurado.' }); return; }
   try {
     const { prompt } = req.body;
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: process.env.GEMINI_TEXT_MODEL!,
       contents: prompt || 'Dame un buen consejo de truco criollo con picardía.',
       config: {
         systemInstruction:
@@ -44,13 +46,13 @@ app.post('/api/voice-chat', async (req, res) => {
 const wss = new WebSocketServer({ server, path: '/api/live' });
 
 wss.on('connection', async (clientWs: WebSocket) => {
-  console.log('Client connected to Live API WebSocket');
+  if (!ai || !process.env.GEMINI_LIVE_MODEL) { clientWs.send(JSON.stringify({ error: 'El asistente de voz no está configurado.' })); clientWs.close(1013); return; }
 
   let session: any = null;
 
   try {
     session = await ai.live.connect({
-      model: 'gemini-3.8-live',
+      model: process.env.GEMINI_LIVE_MODEL!,
       config: {
         responseModalities: [Modality.AUDIO],
         speechConfig: {
@@ -82,7 +84,7 @@ wss.on('connection', async (clientWs: WebSocket) => {
           });
         } else if (payload.text && session) {
           session.sendRealtimeInput({
-            content: [{ parts: [{ text: payload.text }] }],
+            text: payload.text,
           });
         }
       } catch (err) {
@@ -130,3 +132,4 @@ async function startServer() {
 }
 
 startServer();
+
